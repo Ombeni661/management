@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories | Modern E-Commerce</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles to replicate Tailwind's primary colors and effects */
+        :root {
+            --bs-primary: #0ea5e9;
+            --bs-primary-light: #f0f9ff;
+            --bs-primary-dark: #075985;
+            --bs-gray-dark: #1f2937;
+            --bs-gray-light: #f9fafb;
+        }
+        .bg-primary-light { background-color: var(--bs-primary-light); }
+        .bg-gray-dark { background-color: var(--bs-gray-dark); }
+        .text-primary-dark { color: var(--bs-primary-dark); }
+        .border-primary-dark { border-color: var(--bs-primary-dark); }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        .category-card img {
+            transition: transform 0.4s ease;
+        }
+        .category-card:hover img {
+            transform: scale(1.05);
+        }
+        /* Dark mode styles */
+        .dark {
+            color-scheme: dark;
+            background-color: var(--bs-gray-dark);
+        }
+        .dark .bg-light { background-color: var(--bs-gray-dark) !important; }
+        .dark .bg-white { background-color: #374151 !important; }
+        .dark .text-dark { color: #e5e7eb !important; }
+        .dark .border-light { border-color: #4b5563 !important; }
+        .dark .bg-primary-light { background-color: #1e40af !important; }
+        .dark .text-muted { color: #9ca3af !important; }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-primary" href="#">StackRw</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_products1.html">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active border-bottom border-primary border-2" href="admin_categories.html" id="categories-tab">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Deals</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="input-group me-3">
+                        <span class="input-group-text bg-light border-0"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" class="form-control bg-light border-0" placeholder="Search products...">
+                    </div>
+                    <button class="btn position-relative me-2" type="button">
+                        <i class="fas fa-heart text-muted"></i>
+                        <span class="notification-badge bg-danger text-white">3</span>
+                    </button>
+                    <button class="btn position-relative me-2" type="button">
+                        <i class="fas fa-shopping-cart text-muted"></i>
+                        <span class="notification-badge bg-primary text-white">2</span>
+                    </button>
+                    <button class="btn me-2" id="theme-toggle" type="button">
+                        <i class="fas fa-moon dark-hidden"></i>
+                        <i class="fas fa-sun d-none dark-d-block"></i>
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" id="user-menu-button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img class="rounded-circle" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" width="32" height="32">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" id="user-menu" aria-labelledby="user-menu-button">
+                            <li><a class="dropdown-item" href="#">Your Profile</a></li>
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><a class="dropdown-item" href="#">Sign out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="d-lg-none bg-white shadow-sm" id="mobile-menu" style="display: none;">
+        <div class="py-3">
+            <a class="d-block px-4 py-2 text-dark" href="#">Home</a>
+            <a class="d-block px-4 py-2 text-dark" href="#">Shop</a>
+            <a class="d-block px-4 py-2 bg-primary-light text-primary" href="#">Categories</a>
+            <a class="d-block px-4 py-2 text-dark" href="#">Deals</a>
+        </div>
+        <div class="border-top pt-4 pb-3">
+            <div class="d-flex align-items-center px-4">
+                <img class="rounded-circle me-3" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" width="40" height="40">
+                <div>
+                    <div class="fw-medium text-dark">Sarah Johnson</div>
+                    <div class="text-muted small">sarah@example.com</div>
+                </div>
+                <button class="ms-auto btn text-muted"><i class="fas fa-bell"></i></button>
+            </div>
+            <div class="mt-3">
+                <a class="d-block px-4 py-2 text-dark" href="#">Your Profile</a>
+                <a class="d-block px-4 py-2 text-dark" href="#">Settings</a>
+                <a class="d-block px-4 py-2 text-dark" href="#">Sign out</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="admin_dashboard.html"><i class="fas fa-home me-1"></i>Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Categories</li>
+            </ol>
+        </nav>
+
+        <!-- Categories Content -->
+        <div class="card shadow-sm">
+            <div class="card-body border-bottom">
+                <h1 class="h3 fw-bold text-dark">Browse Categories</h1>
+                <p class="text-muted">Explore our wide range of products</p>
+            </div>
+            <div class="card-body">
+                <!-- Featured Categories -->
+                <div class="mb-5">
+                    <h2 class="h4 fw-semibold text-dark mb-4 border-bottom pb-2">Featured Categories</h2>
+                    <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-5 g-4">
+                        <div class="col">
+                            <a href="#" class="category-card card h-100 border overflow-hidden text-decoration-none">
+                                <div class="ratio ratio-1x1">
+                                    <img src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="card-img-top object-fit-cover" alt="Electronics">
+                                    <div class="position-absolute bottom-0 start-0 p-3 text-white" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                        <h3 class="h5 fw-semibold">Electronics</h3>
+                                        <p class="small">128 products</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" class="category-card card h-100 border overflow-hidden text-decoration-none">
+                                <div class="ratio ratio-1x1">
+                                    <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="card-img-top object-fit-cover" alt="Fashion">
+                                    <div class="position-absolute bottom-0 start-0 p-3 text-white" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                        <h3 class="h5 fw-semibold">Fashion</h3>
+                                        <p class="small">256 products</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" class="category-card card h-100 border overflow-hidden text-decoration-none">
+                                <div class="ratio ratio-1x1">
+                                    <img src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="card-img-top object-fit-cover" alt="Furniture">
+                                    <div class="position-absolute bottom-0 start-0 p-3 text-white" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                        <h3 class="h5 fw-semibold">Furniture</h3>
+                                        <p class="small">84 products</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" class="category-card card h-100 border overflow-hidden text-decoration-none">
+                                <div class="ratio ratio-1x1">
+                                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="card-img-top object-fit-cover" alt="Food">
+                                    <div class="position-absolute bottom-0 start-0 p-3 text-white" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                        <h3 class="h5 fw-semibold">Food</h3>
+                                        <p class="small">312 products</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" class="category-card card h-100 border overflow-hidden text-decoration-none">
+                                <div class="ratio ratio-1x1">
+                                    <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="card-img-top object-fit-cover" alt="Accessories">
+                                    <div class="position-absolute bottom-0 start-0 p-3 text-white" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                        <h3 class="h5 fw-semibold">Accessories</h3>
+                                        <p class="small">176 products</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Categories with Subcategories -->
+                <div class="mb-5">
+                    <h2 class="h4 fw-semibold text-dark mb-4 border-bottom pb-2">All Categories</h2>
+                    <div class="accordion" id="categoriesAccordion">
+                        <!-- Electronics -->
+                        <div class="accordion-item border">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseElectronics" aria-expanded="false" aria-controls="collapseElectronics">
+                                    <span class="d-flex align-items-center">
+                                        <span class="p-2 rounded bg-primary-light text-primary me-2"><i class="fas fa-mobile-alt"></i></span>
+                                        Electronics
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="collapseElectronics" class="accordion-collapse collapse" data-bs-parent="#categoriesAccordion">
+                                <div class="accordion-body">
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Smartphones</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Laptops</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">TVs</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Cameras</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Accessories</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fashion -->
+                        <div class="accordion-item border">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFashion" aria-expanded="false" aria-controls="collapseFashion">
+                                    <span class="d-flex align-items-center">
+                                        <span class="p-2 rounded bg-purple-100 text-purple-600 me-2"><i class="fas fa-tshirt"></i></span>
+                                        Fashion
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="collapseFashion" class="accordion-collapse collapse" data-bs-parent="#categoriesAccordion">
+                                <div class="accordion-body">
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Men's Clothing</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Women's Clothing</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Kids' Clothing</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Shoes</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Accessories</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Furniture -->
+                        <div class="accordion-item border">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFurniture" aria-expanded="false" aria-controls="collapseFurniture">
+                                    <span class="d-flex align-items-center">
+                                        <span class="p-2 rounded bg-green-100 text-green-600 me-2"><i class="fas fa-couch"></i></span>
+                                        Furniture
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="collapseFurniture" class="accordion-collapse collapse" data-bs-parent="#categoriesAccordion">
+                                <div class="accordion-body">
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Living Room</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Bedroom</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Kitchen</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Office</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Outdoor</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Food -->
+                        <div class="accordion-item border">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFood" aria-expanded="false" aria-controls="collapseFood">
+                                    <span class="d-flex align-items-center">
+                                        <span class="p-2 rounded bg-yellow-100 text-yellow-600 me-2"><i class="fas fa-utensils"></i></span>
+                                        Food
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="collapseFood" class="accordion-collapse collapse" data-bs-parent="#categoriesAccordion">
+                                <div class="accordion-body">
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Groceries</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Beverages</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Snacks</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Fresh Produce</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Frozen Foods</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Books -->
+                        <div class="accordion-item border">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBooks" aria-expanded="false" aria-controls="collapseBooks">
+                                    <span class="d-flex align-items-center">
+                                        <span class="p-2 rounded bg-red-100 text-red-600 me-2"><i class="fas fa-book"></i></span>
+                                        Books
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="collapseBooks" class="accordion-collapse collapse" data-bs-parent="#categoriesAccordion">
+                                <div class="accordion-body">
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Fiction</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Non-Fiction</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Children's Books</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Textbooks</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Audiobooks</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Gaming -->
+                        <div class="accordion-item border">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGaming" aria-expanded="false" aria-controls="collapseGaming">
+                                    <span class="d-flex align-items-center">
+                                        <span class="p-2 rounded bg-indigo-100 text-indigo-600 me-2"><i class="fas fa-gamepad"></i></span>
+                                        Gaming
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="collapseGaming" class="accordion-collapse collapse" data-bs-parent="#categoriesAccordion">
+                                <div class="accordion-body">
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Consoles</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Games</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Accessories</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">Gaming PCs</a>
+                                    <a class="d-block py-2 ps-4 text-dark text-decoration-none hover-bg-light" href="#">VR</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Popular Categories -->
+                <div>
+                    <h2 class="h4 fw-semibold text-dark mb-4 border-bottom pb-2">Popular This Week</h2>
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+                        <div class="col">
+                            <a href="#" class="card h-100 border bg-light text-decoration-none">
+                                <div class="card-body d-flex align-items-center">
+                                    <span class="p-3 rounded-circle bg-primary-light text-primary me-3"><i class="fas fa-mobile-alt"></i></span>
+                                    <div>
+                                        <h4 class="fw-medium text-dark">Smartphones</h4>
+                                        <p class="text-muted small">+32% this week</p>
+                                    </div>
+                                    <i class="fas fa-arrow-right text-primary position-absolute bottom-0 end-0 m-3 opacity-0 hover-opacity-100 transition-opacity"></i>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" class="card h-100 border bg-light text-decoration-none">
+                                <div class="card-body d-flex align-items-center">
+                                    <span class="p-3 rounded-circle bg-green-100 text-green-600 me-3"><i class="fas fa-leaf"></i></span>
+                                    <div>
+                                        <h4 class="fw-medium text-dark">Organic Food</h4>
+                                        <p class="text-muted small">+28% this week</p>
+                                    </div>
+                                    <i class="fas fa-arrow-right text-primary position-absolute bottom-0 end-0 m-3 opacity-0 hover-opacity-100 transition-opacity"></i>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" class="card h-100 border bg-light text-decoration-none">
+                                <div class="card-body d-flex align-items-center">
+                                    <span class="p-3 rounded-circle bg-purple-100 text-purple-600 me-3"><i class="fas fa-running"></i></span>
+                                    <div>
+                                        <h4 class="fw-medium text-dark">Fitness</h4>
+                                        <p class="text-muted small">+45% this week</p>
+                                    </div>
+                                    <i class="fas fa-arrow-right text-primary position-absolute bottom-0 end-0 m-3 opacity-0 hover-opacity-100 transition-opacity"></i>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" class="card h-100 border bg-light text-decoration-none">
+                                <div class="card-body d-flex align-items-center">
+                                    <span class="p-3 rounded-circle bg-yellow-100 text-yellow-600 me-3"><i class="fas fa-home"></i></span>
+                                    <div>
+                                        <h4 class="fw-medium text-dark">Home Decor</h4>
+                                        <p class="text-muted small">+18% this week</p>
+                                    </div>
+                                    <i class="fas fa-arrow-right text-primary position-absolute bottom-0 end-0 m-3 opacity-0 hover-opacity-100 transition-opacity"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-5">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <h3 class="h5 fw-semibold text-dark mb-4">ShopName</h3>
+                    <p class="text-muted">Your one-stop shop for all your needs.</p>
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="h5 fw-semibold text-dark mb-4">Shop</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">All Products</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Featured</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">New Arrivals</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Deals</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="h5 fw-semibold text-dark mb-4">Customer Service</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">FAQs</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Shipping</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Returns</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="h5 fw-semibold text-dark mb-4">Newsletter</h3>
+                    <p class="text-muted mb-4">Subscribe to get updates on new products and offers.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-primary" type="button"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top mt-5 pt-5 text-center text-muted">
+                <p>© 2023 ShopName. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            document.querySelector('.fa-moon').classList.toggle('dark-hidden');
+            document.querySelector('.fa-sun').classList.toggle('d-none');
+            document.querySelector('.fa-sun').classList.toggle('dark-d-block');
+        });
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            document.querySelector('.fa-moon').classList.add('dark-hidden');
+            document.querySelector('.fa-sun').classList.remove('d-none');
+            document.querySelector('.fa-sun').classList.add('dark-d-block');
+        }
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.querySelector('.navbar-toggler');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html>

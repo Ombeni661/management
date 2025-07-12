@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | InventoryPro</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles to replicate Tailwind's design */
+        :root {
+            --bs-primary: #0ea5e9;
+            --bs-primary-light: #f0f9ff;
+            --bs-primary-dark: #075985;
+            --bs-gray-dark: #1f2937;
+            --bs-gray-light: #f9fafb;
+        }
+        .bg-primary-light { background-color: var(--bs-primary-light); }
+        .bg-gray-dark { background-color: var(--bs-gray-dark); }
+        .text-primary-dark { color: var(--bs-primary-dark); }
+        .border-primary-dark { border-color: var(--bs-primary-dark); }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        /* Dark mode styles */
+        .dark {
+            color-scheme: dark;
+            background-color: var(--bs-gray-dark);
+        }
+        .dark .bg-light { background-color: var(--bs-gray-dark) !important; }
+        .dark .bg-white { background-color: #374151 !important; }
+        .dark .text-dark { color: #e5e7eb !important; }
+        .dark .border-light { border-color: #4b5563 !important; }
+        .dark .bg-primary-light { background-color: #1e40af !important; }
+        .dark .text-muted { color: #9ca3af !important; }
+        /* Table and card hover effects */
+        .table-hover tbody tr:hover { background-color: #f8f9fa; }
+        .dark .table-hover tbody tr:hover { background-color: #4b5563; }
+        .product-card:hover { transform: translateY(-5px); transition: transform 0.3s ease; }
+        /* File upload styling */
+        .file-upload {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+        }
+        .dark .file-upload { border-color: #4b5563; }
+        .file-upload:hover { background-color: #f8f9fa; }
+        .dark .file-upload:hover { background-color: #4b5563; }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Sidebar -->
+    <div class="d-flex">
+        <div class="d-none d-lg-block bg-white shadow-sm vh-100" style="width: 250px;">
+            <div class="p-4">
+                <h3 class="fw-bold text-primary">InventoryPro</h3>
+                <hr class="my-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active border-start border-primary border-3" href="admin_products1.html">
+                            Products
+                            <span class="notification-badge bg-danger text-white ms-2">3 Low</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_orders.html">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_customers.html">Customers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">System</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            Notifications
+                            <span class="notification-badge bg-primary text-white ms-2">5</span>
+                        </a>
+                    </li>
+                </ul>
+                <hr class="my-3">
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="sidebar-user-menu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="rounded-circle me-2" width="32" height="32">
+                        <div>
+                            <div class="fw-medium text-dark">Admin User</div>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="sidebar-user-menu">
+                        <li><a class="dropdown-item" href="#">Your Profile</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Sign out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-grow-1">
+            <!-- Top Navigation -->
+            <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+                <div class="container-fluid">
+                    <a class="navbar-brand fw-bold text-primary" href="#">InventoryPro</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobile-menu" aria-controls="mobile-menu" aria-expanded="false" aria-label="Toggle navigation" id="mobile-menu-button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_dashboard.html">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active border-bottom border-primary border-2" href="admin_products1.html">Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_orders.html">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_customers.html">Customers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">System</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Settings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Notifications <span class="notification-badge bg-primary text-white ms-2">5</span></a>
+                            </li>
+                        </ul>
+                        <div class="d-flex align-items-center">
+                            <div class="input-group me-3">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-search text-muted"></i></span>
+                                <input type="text" class="form-control bg-light border-0" placeholder="Search products...">
+                            </div>
+                            <button class="btn" id="theme-toggle" type="button">
+                                <i class="fas fa-moon dark-hidden"></i>
+                                <i class="fas fa-sun d-none dark-d-block"></i>
+                            </button>
+                            <div class="dropdown ms-2">
+                                <button class="btn dropdown-toggle" type="button" id="user-menu-button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img class="rounded-circle" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" width="32" height="32">
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-menu-button">
+                                    <li><a class="dropdown-item" href="#">Your Profile</a></li>
+                                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Menu -->
+            <div class="d-lg-none bg-white shadow-sm" id="mobile-menu" style="display: none;">
+                <div class="py-3">
+                    <a class="d-block px-4 py-2 text-dark" href="admin_dashboard.html">Dashboard</a>
+                    <a class="d-block px-4 py-2 bg-primary-light text-primary" href="admin_products1.html">Products</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_orders.html">Orders</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_customers.html">Customers</a>
+                    <a class="d-block px-4 py-2 text-dark" href="#">System</a>
+                    <a class="d-block px-4 py-2 text-dark" href="#">Settings</a>
+                    <a class="d-block px-4 py-2 text-dark" href="#">Notifications <span class="notification-badge bg-primary text-white ms-2">5</span></a>
+                </div>
+                <div class="border-top pt-4 pb-3">
+                    <div class="d-flex align-items-center px-4">
+                        <img class="rounded-circle me-3" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" width="40" height="40">
+                        <div>
+                            <div class="fw-medium text-dark">Admin User</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a class="d-block px-4 py-2 text-dark" href="#">Your Profile</a>
+                        <a class="d-block px-4 py-2 text-dark" href="#">Settings</a>
+                        <a class="d-block px-4 py-2 text-dark" href="#">Sign out</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="container py-5">
+                <div class="card shadow-sm mb-5">
+                    <div class="card-body border-bottom">
+                        <h1 class="h3 fw-bold text-dark">Product Management</h1>
+                        <div class="d-flex gap-2 mt-3">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
+                            <button class="btn btn-outline-primary">Import</button>
+                            <button class="btn btn-outline-primary">Export</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filters -->
+                        <div class="d-flex flex-wrap gap-3 mb-4">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="categoryFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                                    All Categories
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="categoryFilter">
+                                    <li><a class="dropdown-item" href="#">Electronics</a></li>
+                                    <li><a class="dropdown-item" href="#">Groceries</a></li>
+                                    <li><a class="dropdown-item" href="#">Clothing</a></li>
+                                    <li><a class="dropdown-item" href="#">Furniture</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="statusFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                                    All Status
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="statusFilter">
+                                    <li><a class="dropdown-item" href="#">Active</a></li>
+                                    <li><a class="dropdown-item" href="#">Inactive</a></li>
+                                    <li><a class="dropdown-item" href="#">Low Stock</a></li>
+                                    <li><a class="dropdown-item" href="#">Out of Stock</a></li>
+                                </ul>
+                            </div>
+                            <button class="btn btn-outline-primary">More Filters</button>
+                            <button class="btn btn-outline-secondary">Reset</button>
+                        </div>
+
+                        <!-- Product Table -->
+                        <div class="table-responsive mb-4">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" class="form-check-input"></th>
+                                        <th>Product</th>
+                                        <th>SKU/Barcode</th>
+                                        <th>Category</th>
+                                        <th>Stock</th>
+                                        <th>Price</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="checkbox" class="form-check-input"></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-2" width="40" height="40" alt="">
+                                                <div>
+                                                    <div class="fw-medium text-dark">Premium Wireless Headphones</div>
+                                                    <div class="text-muted small">AudioTech Pro-X</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium text-dark">PRD-001-2023</div>
+                                            <div class="text-muted small">890123456789</div>
+                                        </td>
+                                        <td>Electronics</td>
+                                        <td>
+                                            <div class="fw-medium text-dark">2 / 50</div>
+                                            <div class="progress" style="height: 5px;">
+                                                <div class="progress-bar bg-danger" style="width: 4%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium text-dark">$129.99</div>
+                                            <div class="text-muted small text-decoration-line-through">$89.99</div>
+                                        </td>
+                                        <td><span class="badge bg-danger">Low Stock</span></td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Actions
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#">View</a></li>
+                                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" class="form-check-input"></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-2" width="40" height="40" alt="">
+                                                <div>
+                                                    <div class="fw-medium text-dark">Organic Coffee Beans</div>
+                                                    <div class="text-muted small">Morning Brew</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium text-dark">PRD-002-2023</div>
+                                            <div class="text-muted small">890123456790</div>
+                                        </td>
+                                        <td>Groceries</td>
+                                        <td>
+                                            <div class="fw-medium text-dark">1 / 20</div>
+                                            <div class="progress" style="height: 5px;">
+                                                <div class="progress-bar bg-danger" style="width: 5%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium text-dark">$12.99</div>
+                                            <div class="text-muted small text-decoration-line-through">$8.50</div>
+                                        </td>
+                                        <td><span class="badge bg-danger">Low Stock</span></td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Actions
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#">View</a></li>
+                                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" class="form-check-input"></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-2" width="40" height="40" alt="">
+                                                <div>
+                                                    <div class="fw-medium text-dark">Wireless Mouse</div>
+                                                    <div class="text-muted small">TechGear Pro</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium text-dark">PRD-003-2023</div>
+                                            <div class="text-muted small">890123456791</div>
+                                        </td>
+                                        <td>Electronics</td>
+                                        <td>
+                                            <div class="fw-medium text-dark">5 / 30</div>
+                                            <div class="progress" style="height: 5px;">
+                                                <div class="progress-bar bg-warning" style="width: 16.67%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium text-dark">$29.99</div>
+                                            <div class="text-muted small text-decoration-line-through">$19.99</div>
+                                        </td>
+                                        <td><span class="badge bg-warning">Warning</span></td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Actions
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#">View</a></li>
+                                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" class="form-check-input"></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1515378960530-7c0da6231fb1?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-2" width="40" height="40" alt="">
+                                                <div>
+                                                    <div class="fw-medium text-dark">Ergonomic Keyboard</div>
+                                                    <div class="text-muted small">ComfyType K7</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium text-dark">PRD-004-2023</div>
+                                            <div class="text-muted small">890123456792</div>
+                                        </td>
+                                        <td>Electronics</td>
+                                        <td>
+                                            <div class="fw-medium text-dark">15 / 25</div>
+                                            <div class="progress" style="height: 5px;">
+                                                <div class="progress-bar bg-success" style="width: 60%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium text-dark">$79.99</div>
+                                            <div class="text-muted small text-decoration-line-through">$49.99</div>
+                                        </td>
+                                        <td><span class="badge bg-success">In Stock</span></td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Actions
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#">View</a></li>
+                                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" class="form-check-input"></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1595475038784-bbe439b4d6e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-2" width="40" height="40" alt="">
+                                                <div>
+                                                    <div class="fw-medium text-dark">Bluetooth Speaker</div>
+                                                    <div class="text-muted small">SoundWave X2</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium text-dark">PRD-005-2023</div>
+                                            <div class="text-muted small">890123456793</div>
+                                        </td>
+                                        <td>Electronics</td>
+                                        <td>
+                                            <div class="fw-medium text-dark">0 / 15</div>
+                                            <div class="progress" style="height: 5px;">
+                                                <div class="progress-bar bg-danger" style="width: 0%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium text-dark">$59.99</div>
+                                            <div class="text-muted small text-decoration-line-through">$39.99</div>
+                                        </td>
+                                        <td><span class="badge bg-danger">Out of Stock</span></td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Actions
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#">View</a></li>
+                                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary">Previous</button>
+                                <button class="btn btn-outline-primary">Next</button>
+                            </div>
+                            <div class="text-muted">
+                                Showing 1 to 5 of 24 results
+                            </div>
+                        </div>
+                        <nav aria-label="Pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                                <li class="page-item"><a class="page-link" href="#">8</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Low Stock Products -->
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+                    <div class="col">
+                        <div class="card product-card h-100 shadow-sm">
+                            <div class="card-body">
+                                <span class="badge bg-danger mb-2">Low Stock</span>
+                                <h4 class="card-title fw-medium text-dark">Premium Wireless Headphones</h4>
+                                <p class="text-muted small">AudioTech Pro-X</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="fw-medium text-dark">$129.99</div>
+                                    <div class="text-muted small text-decoration-line-through">$149.99</div>
+                                </div>
+                                <p class="text-muted small">SKU: PRD-001-2023 • 2 left</p>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar bg-danger" style="width: 4%;"></div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 d-flex gap-2">
+                                <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card product-card h-100 shadow-sm">
+                            <div class="card-body">
+                                <span class="badge bg-danger mb-2">Low Stock</span>
+                                <h4 class="card-title fw-medium text-dark">Organic Coffee Beans</h4>
+                                <p class="text-muted small">Morning Brew</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="fw-medium text-dark">$12.99</div>
+                                    <div class="text-muted small text-decoration-line-through">$15.99</div>
+                                </div>
+                                <p class="text-muted small">SKU: PRD-002-2023 • 1 left</p>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar bg-danger" style="width: 5%;"></div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 d-flex gap-2">
+                                <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card product-card h-100 shadow-sm">
+                            <div class="card-body">
+                                <span class="badge bg-warning mb-2">Warning</span>
+                                <h4 class="card-title fw-medium text-dark">Wireless Mouse</h4>
+                                <p class="text-muted small">TechGear Pro</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="fw-medium text-dark">$29.99</div>
+                                    <div class="text-muted small text-decoration-line-through">$34.99</div>
+                                </div>
+                                <p class="text-muted small">SKU: PRD-003-2023 • 5 left</p>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar bg-warning" style="width: 16.67%;"></div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 d-flex gap-2">
+                                <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card product-card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h4 class="card-title fw-medium text-dark">Ergonomic Keyboard</h4>
+                                <p class="text-muted small">ComfyType K7</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="fw-medium text-dark">$79.99</div>
+                                    <div class="text-muted small text-decoration-line-through">$89.99</div>
+                                </div>
+                                <p class="text-muted small">SKU: PRD-004-2023 • 15 left</p>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar bg-success" style="width: 60%;"></div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 d-flex gap-2">
+                                <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Barcode -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h4 fw-semibold text-dark mb-4">Product Barcode</h2>
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-3" width="60" height="60" alt="">
+                            <div>
+                                <h4 class="fw-medium text-dark">Premium Wireless Headphones</h4>
+                                <p class="text-muted small">SKU: PRD-001-2023</p>
+                            </div>
+                        </div>
+                        <div class="chart-placeholder mb-3" style="height: 100px;">Barcode Placeholder</div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary">Print</button>
+                            <button class="btn btn-outline-primary">Download</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Product Modal -->
+            <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="productName" class="form-label">Product Name *</label>
+                                        <input type="text" class="form-control" id="productName" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="brand" class="form-label">Brand</label>
+                                        <input type="text" class="form-control" id="brand">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="category" class="form-label">Category *</label>
+                                        <select class="form-select" id="category" required>
+                                            <option value="">Select Category</option>
+                                            <option>Electronics</option>
+                                            <option>Groceries</option>
+                                            <option>Clothing</option>
+                                            <option>Furniture</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="subcategory" class="form-label">Subcategory</label>
+                                        <select class="form-select" id="subcategory">
+                                            <option value="">Select Subcategory</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="sku" class="form-label">SKU *</label>
+                                        <input type="text" class="form-control" id="sku" required>
+                                        <button type="button" class="btn btn-sm btn-outline-primary mt-2">Generate</button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="barcode" class="form-label">Barcode</label>
+                                        <input type="text" class="form-control" id="barcode">
+                                        <button type="button" class="btn btn-sm btn-outline-primary mt-2">Generate</button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="costPrice" class="form-label">Cost Price *</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control" id="costPrice" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="sellingPrice" class="form-label">Selling Price *</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control" id="sellingPrice" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="initialQuantity" class="form-label">Initial Quantity *</label>
+                                        <input type="number" class="form-control" id="initialQuantity" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="unit" class="form-label">Unit *</label>
+                                        <select class="form-select" id="unit" required>
+                                            <option>Pieces</option>
+                                            <option>Kilograms</option>
+                                            <option>Grams</option>
+                                            <option>Liters</option>
+                                            <option>Milliliters</option>
+                                            <option>Packs</option>
+                                            <option>Boxes</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="lowStockThreshold" class="form-label">Low Stock Threshold</label>
+                                        <input type="number" class="form-control" id="lowStockThreshold">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="expiryDate" class="form-label">Expiry Date</label>
+                                        <input type="date" class="form-control" id="expiryDate">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" rows="4"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Product Image</label>
+                                        <div class="file-upload">
+                                            <input type="file" class="d-none" id="productImage" accept="image/png, image/jpeg, image/gif">
+                                            <p class="mb-2">Upload an image or drag and drop</p>
+                                            <p class="text-muted small">PNG, JPG, GIF up to 5MB</p>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger mt-2">Remove Image</button>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Product Status</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="productStatus" id="statusActive" value="Active" checked>
+                                            <label class="form-check-label" for="statusActive">Active</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="productStatus" id="statusInactive" value="Inactive">
+                                            <label class="form-check-label" for="statusInactive">Inactive</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Additional Options</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="featuredProduct">
+                                            <label class="form-check-label" for="featuredProduct">Featured Product</label>
+                                            <div class="text-muted small">Show this product as featured</div>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="allowDiscounts">
+                                            <label class="form-check-label" for="allowDiscounts">Allow Discounts</label>
+                                            <div class="text-muted small">This product can be discounted</div>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="taxable">
+                                            <label class="form-check-label" for="taxable">Taxable</label>
+                                            <div class="text-muted small">Apply tax to this product</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Supplier Information</label>
+                                        <div class="mb-3">
+                                            <label for="supplier" class="form-label">Supplier</label>
+                                            <select class="form-select" id="supplier">
+                                                <option value="">Select Supplier</option>
+                                                <option>Tech Suppliers Inc.</option>
+                                                <option>Grocery Wholesalers</option>
+                                                <option>Global Electronics</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="supplierCode" class="form-label">Supplier Code</label>
+                                            <input type="text" class="form-control" id="supplierCode">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            document.querySelector('.fa-moon').classList.toggle('dark-hidden');
+            document.querySelector('.fa-sun').classList.toggle('d-none');
+            document.querySelector('.fa-sun').classList.toggle('dark-d-block');
+        });
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            document.querySelector('.fa-moon').classList.add('dark-hidden');
+            document.querySelector('.fa-sun').classList.remove('d-none');
+            document.querySelector('.fa-sun').classList.add('dark-d-block');
+        }
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // File upload interaction
+        const fileUpload = document.querySelector('.file-upload');
+        const fileInput = document.getElementById('productImage');
+        fileUpload.addEventListener('click', () => fileInput.click());
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('border-primary');
+        });
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('border-primary');
+        });
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('border-primary');
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+        });
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (file) {
+                fileUpload.innerHTML = `<p class="mb-2">${file.name}</p><p class="text-muted small">PNG, JPG, GIF up to 5MB</p>`;
+            }
+        });
+
+        // Save product function (placeholder)
+        function saveProduct() {
+            // Simulate form submission
+            alert('Product saved successfully!');
+            // In a real application, collect form data and send to backend
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+            modal.hide();
+        }
+    </script>
+</body>
+</html>

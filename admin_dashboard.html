@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Admin Portal</title>
+    <!-- PWA Metadata -->
+    <meta name="theme-color" content="#0ea5e9">
+    <link rel="manifest" href="manifest.json">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom styles */
+        :root {
+            --bs-primary: #0ea5e9;
+            --bs-primary-light: #f0f9ff;
+            --bs-primary-dark: #075985;
+            --bs-gray-dark: #1f2937;
+            --bs-gray-light: #f9fafb;
+        }
+        .bg-primary-light { background-color: var(--bs-primary-light); }
+        .bg-gray-dark { background-color: var(--bs-gray-dark); }
+        .text-primary-dark { color: var(--bs-primary-dark); }
+        .border-primary-dark { border-color: var(--bs-primary-dark); }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        /* Dark mode styles */
+        .dark {
+            color-scheme: dark;
+            background-color: var(--bs-gray-dark);
+        }
+        .dark .bg-light { background-color: var(--bs-gray-dark) !important; }
+        .dark .bg-white { background-color: #374151 !important; }
+        .dark .text-dark { color: #e5e7eb !important; }
+        .dark .border-light { border-color: #4b5563 !important; }
+        .dark .bg-primary-light { background-color: #1e40af !important; }
+        .dark .text-muted { color: #9ca3af !important; }
+        /* Chart containers */
+        .chart-container {
+            height: 200px;
+            position: relative;
+        }
+        /* Hover effects */
+        .quick-action-card:hover { 
+            transform: translateY(-5px); 
+            transition: transform 0.3s ease; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .list-group-item:hover { background-color: #f8f9fa; }
+        .dark .list-group-item:hover { background-color: #4b5563; }
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .quick-action-card { height: auto !important; }
+            .chart-container { height: 150px; }
+            .navbar-nav { flex-direction: row; overflow-x: auto; white-space: nowrap; }
+            .navbar-nav .nav-item { display: inline-block; }
+        }
+        /* PWA install prompt */
+        #installContainer {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Sidebar -->
+    <div class="d-flex">
+        <div class="d-none d-lg-block bg-white shadow-sm vh-100 sticky-top" style="width: 250px;">
+            <div class="p-4">
+                <h3 class="fw-bold text-primary">Admin Portal</h3>
+                <hr class="my-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active border-start border-primary border-3" href="admin_dashboard.html">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_products1.html">
+                            <i class="fas fa-boxes me-2"></i>Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_orders.html">
+                            <i class="fas fa-shopping-cart me-2"></i>Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_customers.html">
+                            <i class="fas fa-users me-2"></i>Customers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_analytics.html">
+                            <i class="fas fa-chart-line me-2"></i>Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_promotions.html">
+                            <i class="fas fa-tag me-2"></i>Promotions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_reviews.html">
+                            <i class="fas fa-star me-2"></i>Reviews
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_messages.html">
+                            <i class="fas fa-envelope me-2"></i>Messages
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-cog me-2"></i>Settings
+                        </a>
+                    </li>
+                </ul>
+                <hr class="my-3">
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="sidebar-user-menu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="rounded-circle me-2" width="32" height="32">
+                        <div>
+                            <div class="fw-medium text-dark">Admin User</div>
+                            <div class="text-muted small">Super Admin</div>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="sidebar-user-menu">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Your Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-grow-1">
+            <!-- Top Navigation -->
+            <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobile-menu" aria-controls="mobile-menu" aria-expanded="false" aria-label="Toggle navigation" id="mobile-menu-button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active border-bottom border-primary border-2" href="index.html">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_products1.html">Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_orders.html">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_customers.html">Customers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_analytics.html">Analytics</a>
+                            </li>
+                        </ul>
+                        <div class="d-flex align-items-center">
+                            <div class="position-relative me-3">
+                                <i class="fas fa-bell fs-5"></i>
+                                <span class="notification-badge bg-danger text-white">3</span>
+                            </div>
+                            <div class="input-group me-3">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-search text-muted"></i></span>
+                                <input type="text" class="form-control bg-light border-0" placeholder="Search...">
+                            </div>
+                            <button class="btn" id="theme-toggle" type="button">
+                                <i class="fas fa-moon dark-hidden"></i>
+                                <i class="fas fa-sun d-none dark-d-block"></i>
+                            </button>
+                            <div class="dropdown ms-2">
+                                <button class="btn dropdown-toggle" type="button" id="user-menu-button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img class="rounded-circle" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" width="32" height="32">
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-menu-button">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Your Profile</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign out</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Menu -->
+            <div class="d-lg-none bg-white shadow-sm" id="mobile-menu" style="display: none;">
+                <div class="py-3">
+                    <a class="d-block px-4 py-2 text-dark" href="index.html"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_products1.html"><i class="fas fa-boxes me-2"></i>Products</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_orders.html"><i class="fas fa-shopping-cart me-2"></i>Orders</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_customers.html"><i class="fas fa-users me-2"></i>Customers</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_analytics.html"><i class="fas fa-chart-line me-2"></i>Analytics</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_promotions.html"><i class="fas fa-tag me-2"></i>Promotions</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_reviews.html"><i class="fas fa-star me-2"></i>Reviews</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_messages.html"><i class="fas fa-envelope me-2"></i>Messages</a>
+                    <a class="d-block px-4 py-2 text-dark" href="#"><i class="fas fa-cog me-2"></i>Settings</a>
+                </div>
+                <div class="border-top pt-4 pb-3">
+                    <div class="d-flex align-items-center px-4">
+                        <img class="rounded-circle me-3" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" width="40" height="40">
+                        <div>
+                            <div class="fw-medium text-dark">Admin User</div>
+                            <div class="text-muted small">Super Admin</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a class="d-block px-4 py-2 text-dark" href="#"><i class="fas fa-user me-2"></i>Your Profile</a>
+                        <a class="d-block px-4 py-2 text-dark" href="#"><i class="fas fa-cog me-2"></i>Settings</a>
+                        <a class="d-block px-4 py-2 text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign out</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="container py-4">
+                <div class="card shadow-sm">
+                    <div class="card-body border-bottom">
+                        <h1 class="h3 fw-bold text-dark">Dashboard Overview</h1>
+                        <p class="text-muted">Welcome back! Here's what's happening with your store today.</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Summary Widgets -->
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
+                            <div class="col">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-body">
+                                        <h4 class="card-title fw-medium text-muted">Total Revenue</h4>
+                                        <h2 class="fw-bold text-dark">$24,780</h2>
+                                        <p class="text-success small"><i class="fas fa-arrow-up me-1"></i>12.5% from last week</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <div class="chart-container">
+                                            <canvas id="revenueChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-body">
+                                        <h4 class="card-title fw-medium text-muted">Total Orders</h4>
+                                        <h2 class="fw-bold text-dark">1,248</h2>
+                                        <p class="text-success small"><i class="fas fa-arrow-up me-1"></i>8.2% from last week</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <div class="chart-container">
+                                            <canvas id="ordersChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-body">
+                                        <h4 class="card-title fw-medium text-muted">New Customers</h4>
+                                        <h2 class="fw-bold text-dark">186</h2>
+                                        <p class="text-success small"><i class="fas fa-arrow-up me-1"></i>5.7% from last week</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <div class="chart-container">
+                                            <canvas id="customersChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-body">
+                                        <h4 class="card-title fw-medium text-muted">Low Stock Items</h4>
+                                        <h2 class="fw-bold text-dark">14</h2>
+                                        <p class="text-danger small">Need restocking</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <div class="chart-container">
+                                            <canvas id="inventoryChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="mb-5">
+                            <h2 class="h4 fw-semibold text-dark mb-4 border-bottom pb-2">Quick Actions</h2>
+                            <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-6 g-3">
+                                <div class="col">
+                                    <a href="#" class="card quick-action-card h-100 border bg-light text-decoration-none text-center">
+                                        <div class="card-body py-4">
+                                            <i class="fas fa-plus-circle text-primary mb-2" style="font-size: 1.5rem;"></i>
+                                            <p class="small fw-medium text-dark">Add Product</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a href="#" class="card quick-action-card h-100 border bg-light text-decoration-none text-center">
+                                        <div class="card-body py-4">
+                                            <i class="fas fa-ticket-alt text-primary mb-2" style="font-size: 1.5rem;"></i>
+                                            <p class="small fw-medium text-dark">Create Coupon</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a href="#" class="card quick-action-card h-100 border bg-light text-decoration-none text-center">
+                                        <div class="card-body py-4">
+                                            <i class="fas fa-user-plus text-primary mb-2" style="font-size: 1.5rem;"></i>
+                                            <p class="small fw-medium text-dark">Add Staff</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a href="#" class="card quick-action-card h-100 border bg-light text-decoration-none text-center">
+                                        <div class="card-body py-4">
+                                            <i class="fas fa-file-alt text-primary mb-2" style="font-size: 1.5rem;"></i>
+                                            <p class="small fw-medium text-dark">Generate Report</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a href="#" class="card quick-action-card h-100 border bg-light text-decoration-none text-center">
+                                        <div class="card-body py-4">
+                                            <i class="fas fa-envelope text-primary mb-2" style="font-size: 1.5rem;"></i>
+                                            <p class="small fw-medium text-dark">Send Newsletter</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a href="#" class="card quick-action-card h-100 border bg-light text-decoration-none text-center">
+                                        <div class="card-body py-4">
+                                            <i class="fas fa-cog text-primary mb-2" style="font-size: 1.5rem;"></i>
+                                            <p class="small fw-medium text-dark">Settings</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sales Overview -->
+                        <div class="mb-5">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="h4 fw-semibold text-dark">Sales Overview</h2>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm active" id="weekBtn">Week</button>
+                                    <button class="btn btn-outline-primary btn-sm" id="monthBtn">Month</button>
+                                    <button class="btn btn-outline-primary btn-sm" id="yearBtn">Year</button>
+                                </div>
+                            </div>
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <div class="chart-container" style="height: 300px;">
+                                        <canvas id="salesChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Selling Products -->
+                        <div class="mb-5">
+                            <h2 class="h4 fw-semibold text-dark mb-4 border-bottom pb-2">Top Selling Products</h2>
+                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-3" width="60" height="60" alt="Wireless Headphones">
+                                                <h4 class="card-title fw-medium text-dark mb-0">Wireless Headphones</h4>
+                                            </div>
+                                            <p class="text-muted small">Electronics</p>
+                                            <h3 class="fw-bold text-dark">$12,450</h3>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <p class="text-success small mb-0"><i class="fas fa-arrow-up me-1"></i>+15.2%</p>
+                                                <span class="badge bg-primary">124 sold</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-3" width="60" height="60" alt="Cotton T-Shirt">
+                                                <h4 class="card-title fw-medium text-dark mb-0">Cotton T-Shirt</h4>
+                                            </div>
+                                            <p class="text-muted small">Fashion</p>
+                                            <h3 class="fw-bold text-dark">$8,720</h3>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <p class="text-success small mb-0"><i class="fas fa-arrow-up me-1"></i>+8.6%</p>
+                                                <span class="badge bg-primary">98 sold</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-3" width="60" height="60" alt="Smartphone X">
+                                                <h4 class="card-title fw-medium text-dark mb-0">Smartphone X</h4>
+                                            </div>
+                                            <p class="text-muted small">Electronics</p>
+                                            <h3 class="fw-bold text-dark">$7,890</h3>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <p class="text-danger small mb-0"><i class="fas fa-arrow-down me-1"></i>-3.2%</p>
+                                                <span class="badge bg-primary">76 sold</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-3" width="60" height="60" alt="Programming Book">
+                                                <h4 class="card-title fw-medium text-dark mb-0">Programming Book</h4>
+                                            </div>
+                                            <p class="text-muted small">Books</p>
+                                            <h3 class="fw-bold text-dark">$5,430</h3>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <p class="text-success small mb-0"><i class="fas fa-arrow-up me-1"></i>+22.1%</p>
+                                                <span class="badge bg-primary">54 sold</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Orders -->
+                        <div class="mb-5">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="h4 fw-semibold text-dark">Recent Orders</h2>
+                                <a href="admin_orders.html" class="text-primary text-decoration-none">View all orders</a>
+                            </div>
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Order</th>
+                                                    <th>Date</th>
+                                                    <th>Amount</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-2" width="40" height="40" alt="">
+                                                            <div>
+                                                                <div class="fw-medium text-dark">#ORD-2023-001</div>
+                                                                <div class="text-muted small">John Doe • 2 items</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle">Today, 10:30 AM</td>
+                                                    <td class="align-middle">$129.99</td>
+                                                    <td class="align-middle"><span class="badge bg-success">Completed</span></td>
+                                                    <td class="align-middle">
+                                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-2" width="40" height="40" alt="">
+                                                            <div>
+                                                                <div class="fw-medium text-dark">#ORD-2023-002</div>
+                                                                <div class="text-muted small">Jane Smith • 1 item</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle">Today, 09:15 AM</td>
+                                                    <td class="align-middle">$59.99</td>
+                                                    <td class="align-middle"><span class="badge bg-primary">Processing</span></td>
+                                                    <td class="align-middle">
+                                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-2" width="40" height="40" alt="">
+                                                            <div>
+                                                                <div class="fw-medium text-dark">#ORD-2023-003</div>
+                                                                <div class="text-muted small">Robert Johnson • 3 items</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle">Yesterday, 4:30 PM</td>
+                                                    <td class="align-middle">$189.99</td>
+                                                    <td class="align-middle"><span class="badge bg-info">Shipped</span></td>
+                                                    <td class="align-middle">
+                                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="rounded me-2" width="40" height="40" alt="">
+                                                            <div>
+                                                                <div class="fw-medium text-dark">#ORD-2023-004</div>
+                                                                <div class="text-muted small">Emily Davis • 5 items</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle">Yesterday, 2:15 PM</td>
+                                                    <td class="align-middle">$245.50</td>
+                                                    <td class="align-middle"><span class="badge bg-warning">Pending</span></td>
+                                                    <td class="align-middle">
+                                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="mb-5">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="h4 fw-semibold text-dark">Recent Activity</h2>
+                                <a href="#" class="text-primary text-decoration-none">View all activity</a>
+                            </div>
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <span class="p-2 rounded-circle bg-primary-light text-primary me-3"><i class="fas fa-check-circle"></i></span>
+                                            <div>
+                                                <div class="fw-medium text-dark">Order #ORD-2023-005 was completed successfully.</div>
+                                                <div class="text-muted small">2 minutes ago</div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <span class="p-2 rounded-circle bg-primary-light text-primary me-3"><i class="fas fa-truck"></i></span>
+                                            <div>
+                                                <div class="fw-medium text-dark">Order #ORD-2023-004 has been shipped.</div>
+                                                <div class="text-muted small">1 hour ago</div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <span class="p-2 rounded-circle bg-warning-light text-warning me-3"><i class="fas fa-exclamation-triangle"></i></span>
+                                            <div>
+                                                <div class="fw-medium text-dark">5 products are running low on stock.</div>
+                                                <div class="text-muted small">3 hours ago</div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <span class="p-2 rounded-circle bg-success-light text-success me-3"><i class="fas fa-user-plus"></i></span>
+                                            <div>
+                                                <div class="fw-medium text-dark">12 new customers registered today.</div>
+                                                <div class="text-muted small">5 hours ago</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inventory Alerts -->
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="h4 fw-semibold text-dark">Inventory Alerts</h2>
+                                <a href="admin_products1.html" class="text-primary text-decoration-none">View all inventory</a>
+                            </div>
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <div class="fw-medium text-dark">Wireless Headphones</div>
+                                                <div class="text-muted small">SKU: HP-1001</div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="fw-medium text-dark">2 left</div>
+                                                <div class="text-muted small">Threshold: 5</div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <div class="fw-medium text-dark">Smart Watch</div>
+                                                <div class="text-muted small">SKU: SW-2005</div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="fw-medium text-dark">3 left</div>
+                                                <div class="text-muted small">Threshold: 10</div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <div class="fw-medium text-dark">Bluetooth Speaker</div>
+                                                <div class="text-muted small">SKU: BS-3012</div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="fw-medium text-dark">5 left</div>
+                                                <div class="text-muted small">Threshold: 10</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div id="installContainer" class="card shadow">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-download text-primary me-3 fs-4"></i>
+                <div>
+                    <h5 class="mb-1">Install App</h5>
+                    <p class="small text-muted mb-0">Add this app to your home screen for better experience</p>
+                </div>
+                <button class="btn btn-sm btn-primary ms-3" id="installButton">Install</button>
+                <button class="btn btn-sm btn-outline-secondary ms-2" id="dismissButton">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            document.querySelector('.fa-moon').classList.toggle('dark-hidden');
+            document.querySelector('.fa-sun').classList.toggle('d-none');
+            document.querySelector('.fa-sun').classList.toggle('dark-d-block');
+            
+            // Update charts for dark mode
+            updateChartsForTheme();
+        });
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            document.querySelector('.fa-moon').classList.add('dark-hidden');
+            document.querySelector('.fa-sun').classList.remove('d-none');
+            document.querySelector('.fa-sun').classList.add('dark-d-block');
+        }
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Initialize all charts
+        function initializeCharts() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const textColor = isDarkMode ? '#e5e7eb' : '#1f2937';
+            const gridColor = isDarkMode ? '#4b5563' : '#e5e7eb';
+            
+            // Revenue Chart (Line)
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            const revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [3200, 4100, 2800, 5100, 4200, 3900, 4470],
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        borderColor: 'rgba(14, 165, 233, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                            titleColor: textColor,
+                            bodyColor: textColor,
+                            borderColor: gridColor,
+                            borderWidth: 1
+                        }
+                    },
+                    scales: { 
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor }
+                        },
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor }
+                        }
+                    }
+                }
+            });
+
+            // Orders Chart (Bar)
+            const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+            const ordersChart = new Chart(ordersCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Orders',
+                        data: [42, 58, 39, 67, 51, 48, 53],
+                        backgroundColor: 'rgba(14, 165, 233, 0.7)',
+                        borderColor: 'rgba(14, 165, 233, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                            titleColor: textColor,
+                            bodyColor: textColor,
+                            borderColor: gridColor,
+                            borderWidth: 1
+                        }
+                    },
+                    scales: { 
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor }
+                        },
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor }
+                        }
+                    }
+                }
+            });
+
+            // Customers Chart (Line)
+            const customersCtx = document.getElementById('customersChart').getContext('2d');
+            const customersChart = new Chart(customersCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'New Customers',
+                        data: [12, 19, 15, 27, 22, 18, 24],
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                            titleColor: textColor,
+                            bodyColor: textColor,
+                            borderColor: gridColor,
+                            borderWidth: 1
+                        }
+                    },
+                    scales: { 
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor }
+                        },
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor }
+                        }
+                    }
+                }
+            });
+
+            // Inventory Chart (Doughnut)
+            const inventoryCtx = document.getElementById('inventoryChart').getContext('2d');
+            const inventoryChart = new Chart(inventoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low Stock', 'In Stock'],
+                    datasets: [{
+                        data: [14, 86],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(16, 185, 129, 0.7)'
+                        ],
+                        borderColor: isDarkMode ? '#374151' : '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                            titleColor: textColor,
+                            bodyColor: textColor,
+                            borderColor: gridColor,
+                            borderWidth: 1
+                        }
+                    }
+                }
+            });
+
+            // Sales Overview Chart (Main Chart)
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            const salesChart = new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'Sales',
+                        data: [6500, 5900, 8000, 8100],
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        borderColor: 'rgba(14, 165, 233, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                            titleColor: textColor,
+                            bodyColor: textColor,
+                            borderColor: gridColor,
+                            borderWidth: 1
+                        }
+                    },
+                    scales: { 
+                        y: { 
+                            beginAtZero: false,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor }
+                        },
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor }
+                        }
+                    }
+                }
+            });
+
+            // Store chart references for theme updates
+            window.charts = {
+                revenue: revenueChart,
+                orders: ordersChart,
+                customers: customersChart,
+                inventory: inventoryChart,
+                sales: salesChart
+            };
+        }
+
+        // Update charts when theme changes
+        function updateChartsForTheme() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const textColor = isDarkMode ? '#e5e7eb' : '#1f2937';
+            const gridColor = isDarkMode ? '#4b5563' : '#e5e7eb';
+            
+            for (const chartName in window.charts) {
+                const chart = window.charts[chartName];
+                
+                // Update options
+                chart.options.scales.x.ticks.color = textColor;
+                chart.options.scales.y.ticks.color = textColor;
+                chart.options.scales.x.grid.color = gridColor;
+                chart.options.scales.y.grid.color = gridColor;
+                chart.options.plugins.tooltip.backgroundColor = isDarkMode ? '#374151' : '#ffffff';
+                chart.options.plugins.tooltip.titleColor = textColor;
+                chart.options.plugins.tooltip.bodyColor = textColor;
+                chart.options.plugins.tooltip.borderColor = gridColor;
+                
+                // For doughnut chart (inventory)
+                if (chartName === 'inventory') {
+                    chart.data.datasets[0].borderColor = isDarkMode ? '#374151' : '#ffffff';
+                }
+                
+                chart.update();
+            }
+        }
+
+        // Time period toggle for sales chart
+        document.getElementById('weekBtn').addEventListener('click', function() {
+            window.charts.sales.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+            window.charts.sales.data.datasets[0].data = [6500, 5900, 8000, 8100];
+            window.charts.sales.update();
+            document.getElementById('weekBtn').classList.add('active');
+            document.getElementById('monthBtn').classList.remove('active');
+            document.getElementById('yearBtn').classList.remove('active');
+        });
+
+        document.getElementById('monthBtn').addEventListener('click', function() {
+            window.charts.sales.data.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            window.charts.sales.data.datasets[0].data = [18500, 24700, 19800, 28700, 21300, 24780];
+            window.charts.sales.update();
+            document.getElementById('weekBtn').classList.remove('active');
+            document.getElementById('monthBtn').classList.add('active');
+            document.getElementById('yearBtn').classList.remove('active');
+        });
+
+        document.getElementById('yearBtn').addEventListener('click', function() {
+            window.charts.sales.data.labels = ['2020', '2021', '2022', '2023'];
+            window.charts.sales.data.datasets[0].data = [125000, 187000, 215000, 142000];
+            window.charts.sales.update();
+            document.getElementById('weekBtn').classList.remove('active');
+            document.getElementById('monthBtn').classList.remove('active');
+            document.getElementById('yearBtn').classList.add('active');
+        });
+
+        // PWA Installation
+        let deferredPrompt;
+        const installContainer = document.getElementById('installContainer');
+        const installButton = document.getElementById('installButton');
+        const dismissButton = document.getElementById('dismissButton');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            // Show the install button
+            installContainer.style.display = 'block';
+        });
+
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                // Optionally, send analytics event with outcome of user choice
+                console.log(`User response to the install prompt: ${outcome}`);
+                // We've used the prompt, and can't use it again, throw it away
+                deferredPrompt = null;
+                // Hide the install button
+                installContainer.style.display = 'none';
+            }
+        });
+
+        dismissButton.addEventListener('click', () => {
+            installContainer.style.display = 'none';
+        });
+
+        window.addEventListener('appinstalled', () => {
+            // Hide the install button
+            installContainer.style.display = 'none';
+            // Clear the deferredPrompt so it can be garbage collected
+            deferredPrompt = null;
+            // Optionally, send analytics event to indicate successful install
+            console.log('PWA was installed');
+        });
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            
+            // Check if app is running as PWA
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('Running as PWA');
+            }
+        });
+    </script>
+</body>
+</html>

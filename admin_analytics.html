@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics | Admin Portal</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* Custom styles to replicate Tailwind's design */
+        :root {
+            --bs-primary: #0ea5e9;
+            --bs-primary-light: #f0f9ff;
+            --bs-primary-dark: #075985;
+            --bs-gray-dark: #1f2937;
+            --bs-gray-light: #f9fafb;
+        }
+        .bg-primary-light { background-color: var(--bs-primary-light); }
+        .bg-gray-dark { background-color: var(--bs-gray-dark); }
+        .text-primary-dark { color: var(--bs-primary-dark); }
+        .border-primary-dark { border-color: var(--bs-primary-dark); }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        /* Dark mode styles */
+        .dark {
+            color-scheme: dark;
+            background-color: var(--bs-gray-dark);
+        }
+        .dark .bg-light { background-color: var(--bs-gray-dark) !important; }
+        .dark .bg-white { background-color: #374151 !important; }
+        .dark .text-dark { color: #e5e7eb !important; }
+        .dark .border-light { border-color: #4b5563 !important; }
+        .dark .bg-primary-light { background-color: #1e40af !important; }
+        .dark .text-muted { color: #9ca3af !important; }
+        /* Card and chart styles */
+        .card { border-radius: 8px; }
+        .btn { border-radius: 6px; }
+        .dropdown-menu { border-radius: 6px; }
+        .chart-container { position: relative; height: 300px; }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Sidebar -->
+    <div class="d-flex">
+        <div class="d-none d-lg-block bg-white shadow-sm vh-100" style="width: 250px;">
+            <div class="p-4">
+                <h3 class="fw-bold text-primary">Admin Portal</h3>
+                <hr class="my-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_products1.html">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_orders.html">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_customers.html">Customers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active border-start border-primary border-3" href="admin_analytics.html">Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_promotions.html">Promotions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_reviews.html">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_messages.html">Messages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="settings.html">Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html">Profile</a>
+                    </li>
+                </ul>
+                <hr class="my-3">
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="sidebar-user-menu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="rounded-circle me-2" width="32" height="32">
+                        <div>
+                            <div class="fw-medium text-dark">Admin User</div>
+                            <div class="text-muted small">Super Admin</div>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="sidebar-user-menu">
+                        <li><a class="dropdown-item" href="profile.html">Your Profile</a></li>
+                        <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Sign out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-grow-1">
+            <!-- Top Navigation -->
+            <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobile-menu" aria-controls="mobile-menu" aria-expanded="false" aria-label="Toggle navigation" id="mobile-menu-button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.html">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_products1.html">Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_orders.html">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_customers.html">Customers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active border-bottom border-primary border-2" href="admin_analytics.html">Analytics</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_promotions.html">Promotions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_reviews.html">Reviews</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin_messages.html">Messages</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="settings.html">Settings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="profile.html">Profile</a>
+                            </li>
+                        </ul>
+                        <div class="d-flex align-items-center">
+                            <div class="input-group me-3">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-search text-muted"></i></span>
+                                <input type="text" class="form-control bg-light border-0" placeholder="Search analytics...">
+                            </div>
+                            <button class="btn" id="theme-toggle" type="button">
+                                <i class="fas fa-moon dark-hidden"></i>
+                                <i class="fas fa-sun d-none dark-d-block"></i>
+                            </button>
+                            <div class="dropdown ms-2">
+                                <button class="btn dropdown-toggle" type="button" id="user-menu-button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img class="rounded-circle" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" width="32" height="32">
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-menu-button">
+                                    <li><a class="dropdown-item" href="profile.html">Your Profile</a></li>
+                                    <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+                                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Menu -->
+            <div class="d-lg-none bg-white shadow-sm" id="mobile-menu" style="display: none;">
+                <div class="py-3">
+                    <a class="d-block px-4 py-2 text-dark" href="index.html">Dashboard</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_products1.html">Products</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_orders.html">Orders</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_customers.html">Customers</a>
+                    <a class="d-block px-4 py-2 bg-primary-light text-primary" href="admin_analytics.html">Analytics</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_promotions.html">Promotions</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_reviews.html">Reviews</a>
+                    <a class="d-block px-4 py-2 text-dark" href="admin_messages.html">Messages</a>
+                    <a class="d-block px-4 py-2 text-dark" href="settings.html">Settings</a>
+                    <a class="d-block px-4 py-2 text-dark" href="profile.html">Profile</a>
+                </div>
+                <div class="border-top pt-4 pb-3">
+                    <div class="d-flex align-items-center px-4">
+                        <img class="rounded-circle me-3" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" width="40" height="40">
+                        <div>
+                            <div class="fw-medium text-dark">Admin User</div>
+                            <div class="text-muted small">Super Admin</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a class="d-block px-4 py-2 text-dark" href="profile.html">Your Profile</a>
+                        <a class="d-block px-4 py-2 text-dark" href="settings.html">Settings</a>
+                        <a class="d-block px-4 py-2 text-dark" href="#">Sign out</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="container py-5">
+                <div class="card shadow-sm mb-5">
+                    <div class="card-body border-bottom">
+                        <h1 class="h3 fw-bold text-dark">Analytics Dashboard</h1>
+                        <p class="text-muted">Monitor key performance metrics and trends for your business.</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filters -->
+                        <div class="d-flex flex-wrap gap-3 mb-4">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="timeFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Last 30 Days
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="timeFilter">
+                                    <li><a class="dropdown-item" href="#">Last 7 Days</a></li>
+                                    <li><a class="dropdown-item" href="#">Last 30 Days</a></li>
+                                    <li><a class="dropdown-item" href="#">Last 90 Days</a></li>
+                                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="categoryFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                                    All Categories
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="categoryFilter">
+                                    <li><a class="dropdown-item" href="#">Electronics</a></li>
+                                    <li><a class="dropdown-item" href="#">Clothing</a></li>
+                                    <li><a class="dropdown-item" href="#">Food & Beverage</a></li>
+                                    <li><a class="dropdown-item" href="#">Home & Garden</a></li>
+                                </ul>
+                            </div>
+                            <div class="input-group" style="width: auto;">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-calendar-alt text-muted"></i></span>
+                                <input type="date" class="form-control" value="2023-10-01">
+                            </div>
+                            <div class="input-group" style="width: auto;">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-calendar-alt text-muted"></i></span>
+                                <input type="date" class="form-control" value="2023-10-31">
+                            </div>
+                            <button class="btn btn-outline-primary">Apply Filters</button>
+                            <button class="btn btn-outline-secondary">Reset</button>
+                        </div>
+
+                        <!-- Key Metrics -->
+                        <div class="row mb-5">
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Total Sales</h6>
+                                        <h3 class="fw-bold text-dark">$45,230</h3>
+                                        <p class="text-success small"><i class="fas fa-arrow-up"></i> 12% from last month</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Total Orders</h6>
+                                        <h3 class="fw-bold text-dark">1,245</h3>
+                                        <p class="text-success small"><i class="fas fa-arrow-up"></i> 8% from last month</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">New Customers</h6>
+                                        <h3 class="fw-bold text-dark">320</h3>
+                                        <p class="text-danger small"><i class="fas fa-arrow-down"></i> 5% from last month</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Average Order Value</h6>
+                                        <h3 class="fw-bold text-dark">$36.34</h3>
+                                        <p class="text-success small"><i class="fas fa-arrow-up"></i> 3% from last month</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts -->
+                        <div class="row mb-5">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold text-dark">Sales Over Time</h5>
+                                        <div class="chart-container">
+                                            <canvas id="salesChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold text-dark">Revenue by Category</h5>
+                                        <div class="chart-container">
+                                            <canvas id="categoryChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold text-dark">Top Products by Sales</h5>
+                                        <div class="chart-container">
+                                            <canvas id="productChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            document.querySelector('.fa-moon').classList.toggle('dark-hidden');
+            document.querySelector('.fa-sun').classList.toggle('d-none');
+            document.querySelector('.fa-sun').classList.toggle('dark-d-block');
+        });
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            document.querySelector('.fa-moon').classList.add('dark-hidden');
+            document.querySelector('.fa-sun').classList.remove('d-none');
+            document.querySelector('.fa-sun').classList.add('dark-d-block');
+        }
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Filter interaction
+        document.querySelectorAll('.dropdown-menu a').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const dropdown = item.closest('.dropdown');
+                const button = dropdown.querySelector('.dropdown-toggle');
+                button.textContent = item.textContent;
+                console.log(`Filter selected: ${item.textContent}`);
+                // Add logic to update charts based on filter
+            });
+        });
+
+        // Date filter interaction
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                console.log(`Date changed: ${e.target.value}`);
+                // Add logic to update charts based on date range
+            });
+        });
+
+        // Chart.js initialization
+        const chartColors = {
+            primary: '#0ea5e9',
+            secondary: '#6b7280',
+            success: '#22c55e',
+            danger: '#ef4444',
+            warning: '#facc15',
+        };
+
+        // Sales Over Time (Line Chart)
+        const salesChart = new Chart(document.getElementById('salesChart'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                datasets: [{
+                    label: 'Sales ($)',
+                    data: [12000, 19000, 15000, 22000, 18000, 25000, 20000, 23000, 27000, 30000],
+                    borderColor: chartColors.primary,
+                    backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, position: 'top' },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Revenue by Category (Pie Chart)
+        const categoryChart = new Chart(document.getElementById('categoryChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Electronics', 'Clothing', 'Food & Beverage', 'Home & Garden'],
+                datasets: [{
+                    data: [40, 30, 20, 10],
+                    backgroundColor: [
+                        chartColors.primary,
+                        chartColors.success,
+                        chartColors.warning,
+                        chartColors.danger
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' },
+                    tooltip: { enabled: true }
+                }
+            }
+        });
+
+        // Top Products by Sales (Bar Chart)
+        const productChart = new Chart(document.getElementById('productChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Headphones', 'Coffee Beans', 'Mouse', 'Keyboard'],
+                datasets: [{
+                    label: 'Units Sold',
+                    data: [500, 400, 300, 200],
+                    backgroundColor: chartColors.primary,
+                    borderColor: chartColors.primaryDark,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
